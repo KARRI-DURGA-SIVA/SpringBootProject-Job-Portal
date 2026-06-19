@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: job-portal-postgres
+    environment:
+      POSTGRES_DB: job_portal
+      POSTGRES_USER: job_portal
+      POSTGRES_PASSWORD: job_portal
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: job-portal-redis
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: ./backend-springboot
+    container_name: job-portal-backend
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/job_portal
+      DATABASE_USERNAME: job_portal
+      DATABASE_PASSWORD: job_portal
+      REDIS_HOST: redis
+      JWT_SECRET: change-this-development-secret-change-this-development-secret
+      CORS_ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3000
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend-react
+    container_name: job-portal-frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+
+volumes:
+  postgres-data:

@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:job_portal;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  cache:
+    type: simple
+
+app:
+  jwt:
+    secret: change-this-development-secret-change-this-development-secret
+    expiration-minutes: 60
+  cors:
+    allowed-origins: http://localhost:5173
